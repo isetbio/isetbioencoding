@@ -69,11 +69,12 @@ chessR.set('lights',  envLight, 'add');
 % the x and z axis to be 90 deg to square it up.
 % Rotating z changes a lot.
 
-chessR.set('light', 'background', 'world orientation', [90, -45, 0]);
+chessR.set('light', 'background', 'world orientation', [-90, -45, 0]);
 chessR.get('light', 'background', 'world orientation')
 % To change the position of the global illumination, ...
 %{
- chessR.set('light',  'background', 'world orientation', [0 0 0]);
+ chessR.show('skymap');
+ chessR.set('light',  'background', 'world orientation', [-90 -45 0]);
  piWRS(chessR);
 %}
 
@@ -179,6 +180,9 @@ ii = find(piContains(n,'GroundMaterial'));
 chessR.set('asset',n{ii},'material name','wood001');
 
 %%  Mahogany series
+
+chessR.set('light', 'background', 'world orientation', [-90, -45, 0]);
+
 % {
 chessR.set('from',topForward);
 piWRS(chessR);

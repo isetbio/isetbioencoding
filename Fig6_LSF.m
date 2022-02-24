@@ -64,15 +64,15 @@ end
 wavesamples = [400, 450, 500, 550, 600, 650];
 
 leg = cell(numel(wavesamples),1);
-for ii=1:numel(wavessamples)
+for ii=1:numel(wavesamples)
     leg{ii} = [num2str(wavesamples(ii)),' nm'];
 end
 
 %%
 ieNewGraphWin;
 hold on;
-for ii=1:numel(wavessamples)
-    idx = find(wave == wavessamples(ii));
+for ii=1:numel(wavesamples)
+    idx = find(wave == wavesamples(ii));
     plot(support.y,lsf(:,idx),'Linewidth',2);
 end
 set(gca,'xlim',[-8 8],'ylim',[0 1]);
