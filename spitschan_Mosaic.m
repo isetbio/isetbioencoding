@@ -20,7 +20,7 @@ cmP = cMosaicParams;
 cmP.positionDegs = [3,0];
 cmP.sizeDegs = [6 1];
 cm = cMosaic(cmP);
-cm.visualize('plotTitle',' ');
+cm.visualize('plotTitle',false);
 
 %% Create the harmonic
 hP = harmonicP;
@@ -35,6 +35,8 @@ oi = oiCompute(oi,scene);
 cm.integrationTime = 0.05;
 allE = cm.compute(oi);
 cm.plot('excitations',allE);
+colormap(gray);
+brighten(0.5);
 
 uData = cm.plot('excitations horizontal line',allE,'ydeg',0);
 
