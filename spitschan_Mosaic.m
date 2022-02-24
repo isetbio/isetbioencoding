@@ -12,16 +12,17 @@
 % cm = cMosaic(cmP);
 % cm.visualize;
 
-%% A decent look at a strip along the horizontal axis
+%% A strip along the horizontal axis
 
-% The LSF is pretty constant along here.  The macular pigment is not.
+% The LSF calculated in Fig 6 is pretty constant along this strip.
+% The macular pigment is not constant.
 cmP = cMosaicParams;
 cmP.positionDegs = [3,0];
 cmP.sizeDegs = [6 1];
 cm = cMosaic(cmP);
 cm.visualize('plotTitle',' ');
 
-%%
+%% Create the harmonic
 hP = harmonicP;
 hP.col = 512;
 hP.freq = 10;
@@ -34,6 +35,7 @@ oi = oiCompute(oi,scene);
 cm.integrationTime = 0.05;
 allE = cm.compute(oi);
 cm.plot('excitations',allE);
+
 uData = cm.plot('excitations horizontal line',allE,'ydeg',0);
 
 
@@ -45,7 +47,7 @@ nRegions = 50;
 xRange = max(uData.pos(:,1));
 xStep = xRange/nRegions;
 regionE = zeros(nRegions,1);
-regionP = region;
+regionP = regionE;
 excitations = squeeze(uData.roiE);
 for ii=1:nRegions
     l = uData.pos(:,1) <= xStep*ii & uData.pos(:,1) > xStep*(ii - 1);
@@ -53,10 +55,10 @@ for ii=1:nRegions
     regionE(ii) = sum(excitations(l));
 end
 
+%%
 ieNewGraphWin;
 plot(regionP,regionE);
 grid on;
 xlabel('Retinal position (deg)'); ylabel('Summed excitations');
 
-%%
 %%

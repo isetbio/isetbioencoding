@@ -57,28 +57,23 @@ envLight = piLightCreate('background', ...
 chessR.set('lights',  envLight, 'add');                       
 % chessR.get('light print');
 
-
 % chessR.show('skymap');
 
 % 45 is a uniform yellow
 % 90 is
 
 % To see the windows use something like 80, -45, 0
-% I think this should be
-%
-%   chessR.set('light','background','rotate', xxx);
-%
-% But ...
 %
 % In this case the y value needs to be negative, but it does not seem
 % to matter much what it is.  You generally want the rotation around
 % the x and z axis to be 90 deg to square it up.
 % Rotating z changes a lot.
 
-chessR.set('light',  'background', 'rotate', [90, -45, 0]);
-
+chessR.set('light', 'background', 'world orientation', [90, -45, 0]);
+chessR.get('light', 'background', 'world orientation')
 % To change the position of the global illumination, ...
 %{
+ chessR.set('light',  'background', 'world orientation', [0 0 0]);
  piWRS(chessR);
 %}
 
@@ -148,12 +143,12 @@ piWRS(chessR);
 chessR = piRecipeDefault('scene name','chess set');
 chessR = piMaterialsInsert(chessR);
 chessR.set('to',toObject);
-chessR.set('light', 'delete', 'all');
+chessR.set('light', 'all','delete');  % Changed for V4
 fileName = 'room.exr';
 envLight = piLightCreate('background', ...
     'type', 'infinite',...
     'mapname', fileName);
-chessR.set('lights', 'add', envLight);                       
+chessR.set('lights', envLight,'add');  % Changed for V4                      
 
 %{
 chessR.set('rays per pixel',1024);
@@ -168,7 +163,7 @@ for ii=1:numel(names)
         if piContains(thisMaterial,'Lyse')
             chessR.set('asset',names{ii},'material name','marbleBeige');
         elseif piContains(thisMaterial,'Mrke')
-            chessR.set('asset',names{ii},'material name','mahogany');
+            chessR.set('asset',names{ii},'material name','mahogany_dark');
         end
     end
 end
