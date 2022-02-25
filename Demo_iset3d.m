@@ -27,7 +27,7 @@ distLight = piLightCreate('new dist light',...
     'type', 'distant',...
     'spd', 9000,... % blackbody
     'cameracoordinate', true);
-thisR.set('light', distLight, 'add');
+thisR.set('light',  distLight, 'add');  % Changed for V4
 
 thisR.set('film resolution',[200 150]*2);
 thisR.set('rays per pixel',64);
@@ -38,7 +38,7 @@ thisR.set('nbounces',5);
 thisR.show('objects');
 
 % Make the sphere a little smaller
-assetName = 'Sphere_O';
+assetName = '001_Sphere_O';
 thisR.set('asset',assetName,'scale',[0.5 0.5 0.5]);
 
 % Render
@@ -104,7 +104,10 @@ end
 %% Rotate the skymap
 
 thisR.get('lights print');
-thisR.set('light','skymap_L','rotate',[30 0 0 0]);
+lNames = thisR.get('light','names');
+thisR.show('skymap');
+thisR.set('light',lNames{1},'world orientation',[90 90 0 0]);
+% thisR.set('light',lNames{1},'world orientation',[0 0 0 0]);
 
 scene = piWRS(thisR, 'name', 'Rotate the skymap');
 
