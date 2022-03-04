@@ -1,9 +1,12 @@
 % Figure 9:  spectral components
 %
-% Show the different spectral factors, and then show the fundamentals
+% Show the different spectral factors
+% Then show the fundamentals with scatter
+% Then show with and without macular pigment.
+% Then render an image with and without macular pigment
 %
 
-%%
+%%  Fine wavelength sampling
 wave = 400:1:700;
 
 %%  First the lens
@@ -157,4 +160,29 @@ end
 
 % legend({'Density 0.35','Density 0'});
 
+%% Show the impact of the macular pigment but with an image
+% which('stanfordQuadEntryLowRes')
+scene = sceneFromFile('stanfordQuadEntryLowRes.png','rgb',100,'reflectance-display',400:10:700);
+sceneWindow(scene);
+
+% scene = sceneCreate;
+oi = oiCreate;
+oi = oiCompute(oi,scene);
+
+% Just the lens
+oiWindow(oi);
+
+% The lens and macular pigment
+thisM = Macular;
+t = thisM.transmittance;
+photons = oiGet(oi,'photons');
+for ii=1:31
+    photons(:,:,ii) = photons(:,:,ii)*t(ii);
+end
+oi = oiSet(oi,'photons',photons);
+oiWindow(oi);
+
 %%
+
+
+
