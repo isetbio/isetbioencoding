@@ -3,12 +3,12 @@
 %  thisDir = '/Volumes/GoogleDrive/My Drive/Papers/Book Chapters/2021 Circadian Functions (Spitschan)';
 %  chdir(thisDir)
 %
-% Where is the function oiPosition?  Not checked in from somewhere?
 %
+% NOTE:   Look at the cone representation at the end.
 
 %% opticsLSF
 zCoeffDatabase   = 'Artal2012';   
-subjectRank      = 1:8; % [2, 5, 10, 20];
+subjectRank      = 1; % 1:8; % [2, 5, 10, 20];
 eyeside          = 'right';
 pupilDiamMM      = 3.0;
 centerpsf        = true;
@@ -149,5 +149,71 @@ xlabel('arc min'); ylabel('relative intensity');
 imagesc(support.x, support.y, squeeze(psf(:,:,idx)));
 axis 'square'; colormap(gray); xlabel('arc min'); ylabel('arc min');
 %}
+%% Try putting the zCoeffs for a subject into an oi
+
+scene = sceneCreate('slanted edge', 512, Inf);
+scene = sceneSet(scene,'fov',2);
+% scene = sceneCrop(scene,[128 160 512 64]);
+
+cmP = cMosaicParams;
+cmP.positionDegs = [1,0];
+cmP.sizeDegs = [0.5 0.3];
+cm = cMosaic(cmP);
+   
+cm.integrationTime = 0.05;
+cm.visualize;
+
+%%
+ecc = [1,5,10]; % [1 3 5]
+thisSubject = 2;
+cmP.positionDegs = [1,0];
+cmP.sizeDegs = [0.5 0.3];
+cm = cMosaic(cmP);
+
+n = 0;
+uData = cell(numel(ecc),1);
+for ii = ecc
+    n = n + 1;
+    positionDegs = [ii 0];
+    
+    [oi, psf, support, zCoeffs, subjID]  = ...
+        oiPosition(zCoeffDatabase, 'position',positionDegs, ...
+        'pupil diameter', pupilDiamMM, 'subject rank', thisSubject, ...
+        'wave',wave, ...
+        'eye side', eyeside,'center psf',centerpsf);
+    
+    
+    % These are the pupilMM and zCoeffs from the top of the file.
+    % oi = oiCreate('wvf human', pupilMM, zCoeffs, wave);
+    oi = oiCompute(oi,scene);
+    % oiWindow(oi);
+
+
+    cm.compute(oi);
+    allE = cm.compute(oi);
+    uData{n} = cm.plot('excitations horizontal line',allE,...
+        'ydeg',0, ...
+        'plot title',sprintf('Optics ecc %d',ii));
+    
+    cm.plot('excitations',allE);
+
+end
+
+%%
+
+ieNewGraphWin;
+cc = 1;   % Which color channel
+
+pos = []; exc = [];
+for ii=1:numel(ecc)
+    posE = uData{ii}.pos;
+    roiE = uData{ii}.roiE;
+    tmp = squeeze(roiE{cc});
+    plot(posE{cc}, tmp/max(tmp(:)),'-o');
+    hold on;
+end
+legend({num2str(ecc')})
+
+%%
 
 
