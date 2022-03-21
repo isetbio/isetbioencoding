@@ -164,8 +164,15 @@ cm.integrationTime = 0.05;
 cm.visualize;
 
 %%
+zCoeffDatabase   = 'Artal2012';   
+% subjectRank      = 1; % 1:8; % [2, 5, 10, 20];
+eyeside          = 'right';
+pupilDiamMM      = 3.0;
+centerpsf        = true;
+wave             = 400:10:700;
+
 ecc = [1,5,10]; % [1 3 5]
-thisSubject = 2;
+subjectRank = 5;
 cmP.positionDegs = [1,0];
 cmP.sizeDegs = [0.5 0.3];
 cm = cMosaic(cmP);
@@ -178,7 +185,7 @@ for ii = ecc
     
     [oi, psf, support, zCoeffs, subjID]  = ...
         oiPosition(zCoeffDatabase, 'position',positionDegs, ...
-        'pupil diameter', pupilDiamMM, 'subject rank', thisSubject, ...
+        'pupil diameter', pupilDiamMM, 'subject rank', subjectRank, ...
         'wave',wave, ...
         'eye side', eyeside,'center psf',centerpsf);
     
@@ -199,20 +206,24 @@ for ii = ecc
 
 end
 
-%%
+%% Plot the curves
 
 ieNewGraphWin;
 cc = 1;   % Which color channel
-
+sym = {'ko:','kx-','ks--'};
 pos = []; exc = [];
 for ii=1:numel(ecc)
     posE = uData{ii}.pos;
     roiE = uData{ii}.roiE;
     tmp = squeeze(roiE{cc});
-    plot(posE{cc}, tmp/max(tmp(:)),'-o');
+    plot(posE{cc}, tmp/max(tmp(:)),sym{ii},'LineWidth',2);
     hold on;
 end
-legend({num2str(ecc')})
+legend({num2str(ecc')});
+grid on; title(sprintf('Subject %d Conetype %d',subjectRank,cc));
+title('');
+xlabel('Position (deg)'); ylabel('Normalized excitations');
+set(gca,'fontsize',22)
 
 %%
 
