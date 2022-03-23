@@ -165,7 +165,7 @@ cm.visualize;
 
 %%  Make a test scene
 params = harmonicP;
-params.freq = 60;
+params.freq = 80;
 params.row = 1024; params.col = 1024;
 scene = sceneCreate('harmonic',params);
 scene = sceneSet(scene,'fov',10);
@@ -174,28 +174,27 @@ sceneWindow(scene);
 %% Set up parameters and make the cMosaic
 
 zCoeffDatabase   = 'Artal2012';
-% subjectRank      = 1; % 1:8; % [2, 5, 10, 20];
 eyeside          = 'right';
 pupilDiamMM      = 3.0;
 centerpsf        = true;
 wave             = 400:10:700;
 
-ecc = [1,5,10]; % [1 3 5]
+ecc = [1,10]; % [1 3 5]
 cmP.positionDegs = [5,0];
 cmP.sizeDegs = [10 0.5]; % [0.5 0.3];
 
+fname = fullfile(thisDir,"cm10deg.mat");
 %{
 cm = cMosaic(cmP);
 % cm.visualize;
 
-fname = fullfile(thisDir,"cm10deg.mat");
 save(fname,'cm');
 %}
 load(fname,'cm');
 
 %% Loop through some subjects.
 
-subjectRank = (2:2:40);
+subjectRank      = [10, 40];
 hdl = ieNewGraphWin;
 for ss = 1:numel(subjectRank)
 n = 0;
@@ -230,21 +229,35 @@ end
 % Plot the curves
 ieNewGraphWin;
 cc = 1;   % Which color channel
-sym = {'ko:','kx-','ks--'};
+sym = {'ko-','kx:','ks-'};
 pos = []; exc = [];
 for ii=1:numel(ecc)
     posE = uData{ii}.pos;
     roiE = uData{ii}.roiE;
     tmp = squeeze(roiE{cc});
-    plot(posE{cc}, tmp/max(tmp(:)),sym{ii},'LineWidth',2);
+    mn = mean(tmp(:));
+    mx = max(tmp(:));
+    plot(posE{cc}, (tmp)/mx,sym{ii},'LineWidth',2);    
     hold on;
 end
 legend({num2str(ecc')},'Location','northwest');
-grid on; title(sprintf('Subject %d Conetype %d',subjectRank(ss),cc));
-xlabel('Position (deg)'); ylabel('Normalized excitations');
+grid on; 
+% title(sprintf('Subject %d Conetype %d',subjectRank(ss),cc));
+xlabel('Position (deg)'); ylabel('Relative excitations');
 set(gca,'fontsize',18)
-set(gcf,'Position',[ 0.0004    0.7444    0.7914    0.1729]);
+set(gcf,'Position',[4.0000e-04 0.5486 0.7992 0.3687]);
 drawnow;
+
+%{
+roiE1 = squeeze(uData{1}.roiE{2});
+roiE2 = squeeze(uData{end}.roiE{2});
+
+ieNewGraphWin; 
+h = histogram( (roiE1 - roiE2),50);
+h.FaceColor = [0.5 0.5 0.5];
+grid on; xlabel('\Delta Excitation'); ylabel('N cones');
+set(gca,'FontSize',22);
+%}
 
 end
 
