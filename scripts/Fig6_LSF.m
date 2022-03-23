@@ -7,7 +7,7 @@
 % NOTE:   Look at the cone representation at the end.
 
 %% opticsLSF
-zCoeffDatabase   = 'Artal2012';   
+zCoeffDatabase   = 'Artal2012';
 subjectRank      = 1; % 1:8; % [2, 5, 10, 20];
 eyeside          = 'right';
 pupilDiamMM      = 3.0;
@@ -20,29 +20,29 @@ for thisSubject = subjectRank
     lsf = zeros(201,numel(wave),numel(pos));
     for ii=1:numel(pos)
         positionDegs     = [pos(ii) 0];   % v
-        
+
         [oi, psf, support, zCoeffs, subjID]  = ...
             oiPosition(zCoeffDatabase, 'position',positionDegs, ...
             'pupil diameter', pupilDiamMM, 'subject rank', thisSubject, ...
             'wave',wave, ...
             'eye side', eyeside,'center psf',centerpsf);
-        
+
         % x, w, pos
         lsf(:,:,ii) = psf2lsf(psf);
     end
-    
+
     % Find the luminance weighted sum (luminance)
-    
+
     lumLSF = zeros(201,numel(pos));
     vLambda = ieReadSpectra('Vlambda',wave);
     for ii=1:numel(pos)
         lumLSF(:,ii) = lsf(:,:,ii)*vLambda(:);
     end
-    
+
     lumLSF = lumLSF/max(lumLSF(:));
-    
+
     % Show as line plots
-    
+
     ieNewGraphWin;
     hold on;
     for ii=1:2:numel(pos)
@@ -159,12 +159,21 @@ cmP = cMosaicParams;
 cmP.positionDegs = [1,0];
 cmP.sizeDegs = [0.5 0.3];
 cm = cMosaic(cmP);
-   
+
 cm.integrationTime = 0.05;
 cm.visualize;
 
-%%
-zCoeffDatabase   = 'Artal2012';   
+%%  Make a test scene
+params = harmonicP;
+params.freq = 60;
+params.row = 1024; params.col = 1024;
+scene = sceneCreate('harmonic',params);
+scene = sceneSet(scene,'fov',10);
+sceneWindow(scene);
+
+%% Set up parameters and make the cMosaic
+
+zCoeffDatabase   = 'Artal2012';
 % subjectRank      = 1; % 1:8; % [2, 5, 10, 20];
 eyeside          = 'right';
 pupilDiamMM      = 3.0;
@@ -172,24 +181,36 @@ centerpsf        = true;
 wave             = 400:10:700;
 
 ecc = [1,5,10]; % [1 3 5]
-subjectRank = 5;
-cmP.positionDegs = [1,0];
-cmP.sizeDegs = [0.5 0.3];
-cm = cMosaic(cmP);
+cmP.positionDegs = [5,0];
+cmP.sizeDegs = [10 0.5]; % [0.5 0.3];
 
+%{
+cm = cMosaic(cmP);
+% cm.visualize;
+
+fname = fullfile(thisDir,"cm10deg.mat");
+save(fname,'cm');
+%}
+load(fname,'cm');
+
+%% Loop through some subjects.
+
+subjectRank = (2:2:40);
+hdl = ieNewGraphWin;
+for ss = 1:numel(subjectRank)
 n = 0;
 uData = cell(numel(ecc),1);
 for ii = ecc
     n = n + 1;
     positionDegs = [ii 0];
-    
+
     [oi, psf, support, zCoeffs, subjID]  = ...
         oiPosition(zCoeffDatabase, 'position',positionDegs, ...
-        'pupil diameter', pupilDiamMM, 'subject rank', subjectRank, ...
+        'pupil diameter', pupilDiamMM, 'subject rank', subjectRank(ss), ...
         'wave',wave, ...
         'eye side', eyeside,'center psf',centerpsf);
-    
-    
+
+
     % These are the pupilMM and zCoeffs from the top of the file.
     % oi = oiCreate('wvf human', pupilMM, zCoeffs, wave);
     oi = oiCompute(oi,scene);
@@ -198,16 +219,15 @@ for ii = ecc
 
     cm.compute(oi);
     allE = cm.compute(oi);
-    uData{n} = cm.plot('excitations horizontal line',allE,...
+    [uData{n}, hdl] = cm.plot('excitations horizontal line',allE,...
         'ydeg',0, ...
-        'plot title',sprintf('Optics ecc %d',ii));
-    
-    cm.plot('excitations',allE);
+        'plot title',sprintf('Optics ecc %d Rank %d',ii,subjectRank), ...
+        'hdl',hdl);
 
+    % cm.plot('excitations',allE);
 end
 
-%% Plot the curves
-
+% Plot the curves
 ieNewGraphWin;
 cc = 1;   % Which color channel
 sym = {'ko:','kx-','ks--'};
@@ -219,11 +239,15 @@ for ii=1:numel(ecc)
     plot(posE{cc}, tmp/max(tmp(:)),sym{ii},'LineWidth',2);
     hold on;
 end
-legend({num2str(ecc')});
-grid on; title(sprintf('Subject %d Conetype %d',subjectRank,cc));
-title('');
+legend({num2str(ecc')},'Location','northwest');
+grid on; title(sprintf('Subject %d Conetype %d',subjectRank(ss),cc));
 xlabel('Position (deg)'); ylabel('Normalized excitations');
-set(gca,'fontsize',22)
+set(gca,'fontsize',18)
+set(gcf,'Position',[ 0.0004    0.7444    0.7914    0.1729]);
+drawnow;
+
+end
+
 
 %%
 
