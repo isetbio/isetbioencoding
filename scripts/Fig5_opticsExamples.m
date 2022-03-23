@@ -49,14 +49,20 @@ for thisW = params.wave
     set(gca,'ytick',tMarks);
     xlabel('Position (arc min)'); ylabel('Position (arc min)'); % zlabel('Relative intensity');
     grid on;
-    
-    % Superimp[ose the line spread
-    ieNewGraphWin;
+    hold on; axis xy
+    % Superimpose the line spread
+    % ieNewGraphWin;
     lsf = psf2lsf(psf);
-    lsf = lsf/sum(lsf(:));
+    lsf = lsf/sum(lsf(:)); 
+    % Plot the LSF starting from -10 and scaled to -5.
+    thisLSF = lsf(:,idx)/max(lsf(:,idx));
+    plot(support.y,5*thisLSF-10,'b-','Linewidth',4);
+    %{
     plot(support.y,lsf(:,idx),'Linewidth',2);
     tMarks  = (-15:5:15); mn = -10; mx = 10;
     set(gca,'xtick',tMarks,'xlim',[mn mx],'ylim',[0 5e-3]);
+    %}
+    title(sprintf('W %d Sub %d',thisW,thisSubject));
 end
 
 %% Second row
