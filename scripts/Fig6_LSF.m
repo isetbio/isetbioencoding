@@ -164,12 +164,14 @@ cm.integrationTime = 0.05;
 cm.visualize;
 
 %%  Make a test scene
+%{
 params = harmonicP;
 params.freq = 80;
 params.row = 1024; params.col = 1024;
 scene = sceneCreate('harmonic',params);
 scene = sceneSet(scene,'fov',10);
 sceneWindow(scene);
+%}
 
 %% Set up parameters and make the cMosaic
 
