@@ -2,16 +2,15 @@
 	{
 		"flavor": "",
 		"hook": "",
-		"importance": "",
-		"localHookTemplate": "",
-		"name": "isetbio",
+		"name": "iset3dBio",
+        "localHookTemplate": "",
 		"pathPlacement": "append",
 		"subfolder": "",
 		"toolboxRoot": "",
 		"type": "include",
 		"update": "",
 		"url": ""
-	},
+	},     
     {
 		"flavor": "",
 		"hook": "",
