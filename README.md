@@ -1,5 +1,4 @@
-# isetspitschan
-
+# isetbioencoding
 
 [Visual encoding:  principles and software (2022)](https://stanford.edu/~wandell/data/papers/2022_ISETBio_VisualEncoding.pdf))
 Wandell, Brian A., David H. Brainard, and Nicolas P. Cottaris.
