@@ -11,4 +11,3 @@ For more than two centuries scientists and engineers have worked to understand a
 
 Please see the wiki page for links to the scripts that created the figures.
 
-<img width="542" alt="image" src="https://user-images.githubusercontent.com/1837145/185174239-4cdc1ce7-ea59-4256-8db2-74edf4fa6d75.png">
